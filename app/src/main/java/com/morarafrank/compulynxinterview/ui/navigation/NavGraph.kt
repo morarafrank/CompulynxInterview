@@ -25,9 +25,9 @@ fun CompulynxInterviewNavGraph(
         composable(Screens.Login.route){
 
             LoginScreen(
-                navigateToHome = {
-                    navController.navigate(Screens.Home.route)
-                }
+//                navigateToHome = {
+//                    navController.navigate(Screens.Home.route)
+//                }
             )
         }
 
