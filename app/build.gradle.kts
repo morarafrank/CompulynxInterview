@@ -12,11 +12,11 @@ plugins {
 }
 
 android {
-    namespace = "com.morarafrank.composetemplate"
-    compileSdk = 33
+    namespace = "com.morarafrank.compulynxinterview"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.morarafrank.composetemplate"
+        applicationId = "com.morarafrank.compulynxinterview"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
@@ -64,7 +64,7 @@ dependencies {
     val retrofit_version = "2.9.0"
     val okhttp_version = "4.9.2"
     val coil_version = "1.4.0"
-    val room_version = "2.5.0"
+    val room_version = "2.6.1"
     val shared_preferences_version = "1.1.1"
     val datastore_version = "1.0.0"
     val hilt_version = "2.44.2"
@@ -165,4 +165,11 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
+    // JSON Parsing
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Timber
+    implementation ("com.jakewharton.timber:timber:5.0.1")
 }
