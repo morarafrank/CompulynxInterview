@@ -35,32 +35,21 @@ import androidx.compose.ui.unit.sp
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendMoneyScreen(
-//    navigateBack: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Row(
-                        modifier = modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.send_money_page),
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.dm_sans_medium))
-                        )
-                    }
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = {
-//                        navigateBack()
+                        navigateBack()
                     }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back IconButton")
                     }
@@ -119,8 +108,6 @@ fun SendMoneyScreen(
                     )
                 }
 
-
-                
             }
         }
     )

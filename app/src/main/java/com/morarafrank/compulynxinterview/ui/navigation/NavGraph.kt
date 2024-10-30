@@ -66,17 +66,17 @@ fun CompulynxInterviewNavGraph(
 
         composable(Screens.SendMoney.route){
             SendMoneyScreen(
-//                navigateBack = {
-//                    navController.navigateUp()
-//                }
+                navigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
 
         composable(Screens.Statement.route){
             StatementScreen(
-                navigateBack = {
-                    navController.navigateUp()
-                }
+//                navigateBack = {
+//                    navController.navigateUp()
+//                }
             )
         }
     }
