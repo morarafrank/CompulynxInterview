@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatementScreen(
