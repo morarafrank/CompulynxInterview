@@ -24,16 +24,16 @@ import androidx.compose.ui.unit.sp
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.R
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
 //    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-//    navigateToCustomerProfile: () -> Unit,
-//    navigateToLastTransactions: () -> Unit,
-//    navigateToSendMoney: () -> Unit,
-//    navigateToStatement: () -> Unit
+    navigateToCustomerProfile: () -> Unit,
+    navigateToLastTransactions: () -> Unit,
+    navigateToSendMoney: () -> Unit,
+    navigateToStatement: () -> Unit
 ) {
 
     Scaffold(

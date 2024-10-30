@@ -33,18 +33,18 @@ fun CompulynxInterviewNavGraph(
 
         composable(Screens.Home.route){
             HomeScreen(
-//                navigateToStatement = {
-//                    navController.navigate(Screens.Statement.route)
-//                },
-//                navigateToSendMoney = {
-//                    navController.navigate(Screens.SendMoney.route)
-//                },
-//                navigateToCustomerProfile = {
-//                    navController.navigate(Screens.CustomerProfile.route)
-//                },
-//                navigateToLastTransactions = {
-//                    navController.navigate(Screens.LastTransactions.route)
-//                }
+                navigateToStatement = {
+                    navController.navigate(Screens.Statement.route)
+                },
+                navigateToSendMoney = {
+                    navController.navigate(Screens.SendMoney.route)
+                },
+                navigateToCustomerProfile = {
+                    navController.navigate(Screens.CustomerProfile.route)
+                },
+                navigateToLastTransactions = {
+                    navController.navigate(Screens.LastTransactions.route)
+                }
             )
         }
 
@@ -66,9 +66,9 @@ fun CompulynxInterviewNavGraph(
 
         composable(Screens.SendMoney.route){
             SendMoneyScreen(
-                navigateBack = {
-                    navController.navigateUp()
-                }
+//                navigateBack = {
+//                    navController.navigateUp()
+//                }
             )
         }
 
