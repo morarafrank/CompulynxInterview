@@ -14,6 +14,7 @@ import androidx.navigation.NavGraph
 import androidx.navigation.compose.rememberNavController
 import com.morarafrank.compulynxinterview.ui.navigation.CompulynxInterviewNavGraph
 import com.morarafrank.compulynxinterview.ui.theme.ComposeTemplateTheme
+import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,13 +24,14 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
 
                 val navController = rememberNavController()
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     CompulynxInterviewNavGraph(
                         navController = navController,
-//                        isSignedIn = false ,
+                        isSignedIn = CompulynxAndroidInterviewSharedPrefs.getIsLoggedIn() ,
                     )
 
                 }

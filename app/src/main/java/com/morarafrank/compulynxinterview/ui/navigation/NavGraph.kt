@@ -14,12 +14,12 @@ import com.morarafrank.compulynxinterview.ui.screens.StatementScreen
 @Composable
 fun CompulynxInterviewNavGraph(
     navController: NavHostController,
-//    isSignedIn: Boolean,
+    isSignedIn: Boolean,
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.route
+        startDestination = if (isSignedIn) Screens.Home.route else Screens.Login.route
     ){
 
         composable(Screens.Login.route){
@@ -74,9 +74,9 @@ fun CompulynxInterviewNavGraph(
 
         composable(Screens.Statement.route){
             StatementScreen(
-//                navigateBack = {
-//                    navController.navigateUp()
-//                }
+                navigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }
