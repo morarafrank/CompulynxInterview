@@ -34,13 +34,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
 //    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-//    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit
 ) {
 
     Scaffold(
@@ -87,7 +87,7 @@ fun LoginScreen(
 
                 Button(
                     onClick = {
-//                        navigateToHome()
+                        navigateToHome()
                     },
                     modifier = modifier.fillMaxWidth()
                 ) {

@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">ComposeTemplate</string>
+    <string name="app_name">CompulynxAndroidInterview</string>
+    <string name="balance">Balance</string>
+    <string name="send_money">Send Money</string>
+    <string name="view_statement">View Statement</string>
+    <string name="last_transactions">Last Transactions</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="home_page">Home Page</string>
 </resources>

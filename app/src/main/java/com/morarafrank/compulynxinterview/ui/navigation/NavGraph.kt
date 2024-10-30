@@ -25,26 +25,26 @@ fun CompulynxInterviewNavGraph(
         composable(Screens.Login.route){
 
             LoginScreen(
-//                navigateToHome = {
-//                    navController.navigate(Screens.Home.route)
-//                }
+                navigateToHome = {
+                    navController.navigate(Screens.Home.route)
+                }
             )
         }
 
         composable(Screens.Home.route){
             HomeScreen(
-                navigateToStatement = {
-                    navController.navigate(Screens.Statement.route)
-                },
-                navigateToSendMoney = {
-                    navController.navigate(Screens.SendMoney.route)
-                },
-                navigateToCustomerProfile = {
-                    navController.navigate(Screens.CustomerProfile.route)
-                },
-                navigateToLastTransactions = {
-                    navController.navigate(Screens.LastTransactions.route)
-                }
+//                navigateToStatement = {
+//                    navController.navigate(Screens.Statement.route)
+//                },
+//                navigateToSendMoney = {
+//                    navController.navigate(Screens.SendMoney.route)
+//                },
+//                navigateToCustomerProfile = {
+//                    navController.navigate(Screens.CustomerProfile.route)
+//                },
+//                navigateToLastTransactions = {
+//                    navController.navigate(Screens.LastTransactions.route)
+//                }
             )
         }
 
