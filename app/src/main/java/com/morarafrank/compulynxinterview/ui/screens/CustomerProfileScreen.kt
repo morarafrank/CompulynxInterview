@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.sp
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
-@Preview
+//@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomerProfileScreen(
-//    navigateBack: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -47,7 +47,7 @@ fun CustomerProfileScreen(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = {
-//                        navigateBack()
+                        navigateBack()
                     }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back IconButton")
                     }
@@ -136,7 +136,9 @@ fun CustomerProfileScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navigateBack()
+                    },
                     modifier = modifier.fillMaxWidth(0.5f)
                 ) {
                     Text(

@@ -34,23 +34,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.morarafrank.compulynxinterview.R
+import com.morarafrank.compulynxinterview.ui.composables.SingleTransactionRow
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatementScreen(
-//    navigateBack: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {},
+                title = {
+                    Row(
+                        modifier = modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.statement),
+                            fontSize = 18.sp,
+                            fontFamily = fontFamily
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = {
-//                        navigateBack()
+                        navigateBack()
                     }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back IconButton")
                     }
@@ -100,37 +112,8 @@ fun StatementScreen(
                         )
                     }
                 }
-
-
-
-
-
             }
         }
     )
 }
 
-@Composable
-fun SingleTransactionRow(
-    modifier: Modifier = Modifier,
-    transactionId: String, 
-    amount: String,
-    fontFamily: FontFamily
-) {
-    Row (
-        modifier = modifier
-            .fillMaxWidth()
-//            .padding(4.dp)
-            .border(0.5.dp, Color.Black)
-            .padding(4.dp)
-        ,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-
-        Text(text = transactionId, fontFamily = fontFamily)
-        Text(text = "|", modifier = modifier.fillMaxHeight())
-        Text(text = amount, fontFamily = fontFamily)
-
-    }
-}
