@@ -1,6 +1,8 @@
 package com.morarafrank.compulynxinterview.di
 
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.morarafrank.compulynxinterview.utils.Constants
 import com.morarafrank.compulynxinterview.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -18,17 +20,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    @Singleton
-    @Provides
-    fun provideHttpClient(interceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
-        return OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .apply {
-                interceptors().addAll(interceptors)
-            }
-            .build()
-    }
+
 
     @Provides
     @Singleton
@@ -41,7 +33,23 @@ object NetworkModule {
         GsonConverterFactory.create()
 
     @Provides
+    @Named("baseUrl")
+    fun provideBaseUrl(): String =  Constants.BASE_URL
+
+
     @Singleton
+    @Provides
+    fun provideHttpClient(interceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
+        return OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .apply {
+                interceptors().addAll(interceptors)
+            }
+            .build()
+    }
+
+    @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory,
@@ -49,7 +57,8 @@ object NetworkModule {
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(gsonConverterFactory)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .build()
 }
