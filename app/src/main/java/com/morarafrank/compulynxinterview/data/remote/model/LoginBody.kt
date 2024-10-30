@@ -12,12 +12,12 @@ data class LoginBody(
 @Parcelize
 data class LoginResponse(
     val message: String,
-    val data: Customer,
+    val data: _Customer,
     val status: Int
 ) : Parcelable
 
 @Parcelize
-data class Customer(
+data class _Customer(
     val id: String,
     val name: String,
     val account: String,

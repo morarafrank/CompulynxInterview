@@ -2,6 +2,9 @@ package com.morarafrank.compulynxinterview.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.morarafrank.compulynxinterview.data.local.customer.Customer
+import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
 import com.morarafrank.compulynxinterview.data.local.transaction.Transactions
 import com.morarafrank.compulynxinterview.data.remote.model.AccountBalanceResponse
 import com.morarafrank.compulynxinterview.data.remote.model.Last100Transactions
@@ -10,6 +13,7 @@ import com.morarafrank.compulynxinterview.data.remote.model.LoginBody
 import com.morarafrank.compulynxinterview.data.remote.model.LoginResponse
 import com.morarafrank.compulynxinterview.data.remote.model.SendMoneyBody
 import com.morarafrank.compulynxinterview.data.remote.model.SendMoneyResponse
+import com.morarafrank.compulynxinterview.domain.repo.CompulynxRepository
 import com.morarafrank.compulynxinterview.domain.use_cases.CheckAccountBalanceUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.GetLast100TransactionsUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.LoginUseCase
@@ -28,7 +32,8 @@ class CompulynxViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val getLast100TransactionsUseCase: GetLast100TransactionsUseCase,
     private val sendMoneyUseCase: SendMoneyUseCase,
-    private val checkBalanceUseCase: CheckAccountBalanceUseCase
+    private val checkBalanceUseCase: CheckAccountBalanceUseCase,
+    private val repository: CompulynxRepository
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
@@ -49,6 +54,16 @@ class CompulynxViewModel @Inject constructor(
     private val _transactions = MutableStateFlow<Last100Transactions>(emptyList())
     val transactions: StateFlow<Last100Transactions>
         get() = _transactions
+
+    private val _roomTransactions = MutableStateFlow<Transactions>(emptyList())
+    val roomTransactions: StateFlow<Transactions>
+        get() = _roomTransactions
+
+
+//    private val _customer = MutableStateFlow<Customer>(Customer())
+//    val customer: StateFlow<Customer>
+//        get() = _customer
+
 
     fun login(loginBody: LoginBody) = viewModelScope.launch {
 
@@ -142,6 +157,35 @@ class CompulynxViewModel @Inject constructor(
 
         }catch (e: Exception){
             _last100TransactionsUiState.value = Resource.Error(e)
+        }
+    }
+
+//    fun getCustomer() = viewModelScope.launch {
+//        repository.getCustomer().collectLatest { customer ->
+//            _customer.value = customer
+//        }
+//    }
+
+    fun addCustomer(customer: Customer) = viewModelScope.launch {
+        repository.addCustomer(customer)
+    }
+
+    fun saveSendTransaction(transaction: Transaction) = viewModelScope.launch {
+        repository.saveSendTransaction(transaction)
+    }
+
+    fun getRoomTransactions() = viewModelScope.launch {
+        try {
+
+            repository.getRoomTransactions().collectLatest { transactions ->
+                if (transactions.isNotEmpty()){
+                    _roomTransactions.value = transactions
+                } else {
+                    _roomTransactions.value = emptyList()
+                }
+            }
+        }catch (e: Exception){
+            _roomTransactions.value = emptyList()
         }
     }
 

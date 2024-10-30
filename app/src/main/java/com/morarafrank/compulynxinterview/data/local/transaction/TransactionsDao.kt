@@ -15,14 +15,8 @@ interface TransactionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addTransaction(transaction: Transaction)
 
-    @Update
-    suspend fun updateTransaction(transaction: Transaction)
-
     @Delete
     suspend fun deleteTransaction(transaction: Transaction)
-
-    @Query("SELECT * FROM transactions WHERE id = :id")
-    suspend fun getTransactionById(id: Int): Transaction?
 
     @Query("SELECT * FROM transactions")
     fun getAllTransactions(): Flow<Transactions>

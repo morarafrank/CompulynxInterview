@@ -1,5 +1,11 @@
 package com.morarafrank.compulynxinterview.data.repo
 
+import com.morarafrank.compulynxinterview.data.local.customer.Customer
+import com.morarafrank.compulynxinterview.data.local.customer.CustomerDao
+import com.morarafrank.compulynxinterview.data.local.customer.Customers
+import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
+import com.morarafrank.compulynxinterview.data.local.transaction.Transactions
+import com.morarafrank.compulynxinterview.data.local.transaction.TransactionsDao
 import com.morarafrank.compulynxinterview.data.remote.CompulynxService
 import com.morarafrank.compulynxinterview.data.remote.model.AccountBalanceResponse
 import com.morarafrank.compulynxinterview.data.remote.model.Last100TransactionsResponse
@@ -15,7 +21,9 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CompulynxRepoImpl @Inject constructor(
-    private val compulynxService: CompulynxService
+    private val compulynxService: CompulynxService,
+    private val transactionsDao: TransactionsDao,
+    private val customerDao: CustomerDao
 ): CompulynxRepository {
     override suspend fun login(loginBody: LoginBody): Resource<LoginResponse> {
         return try {
@@ -23,6 +31,25 @@ class CompulynxRepoImpl @Inject constructor(
         } catch (e: Exception) {
             Resource.Error(e)
         }
+    }
+
+    override suspend fun getCustomer(): Flow<Customers> = customerDao.getCustomers()
+
+    override suspend fun addCustomer(customer: Customer): Resource<Boolean> {
+
+        return try {
+            customerDao.addCustomer(customer)
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e)
+            }
+    }
+
+    override suspend fun saveSendTransaction(transaction: Transaction) = try {
+        transactionsDao.addTransaction(transaction)
+        Resource.Success(true)
+    } catch (e: Exception) {
+        Resource.Error(e)
     }
 
     override suspend fun sendMoney(sendMoneyBody: SendMoneyBody): Resource<SendMoneyResponse> {
@@ -51,6 +78,8 @@ class CompulynxRepoImpl @Inject constructor(
     }.catch {
         emit(Resource.Error(it))
     }
+
+    override fun getRoomTransactions(): Flow<Transactions> = transactionsDao.getAllTransactions()
 
 
 }
