@@ -3,7 +3,6 @@ package com.morarafrank.compulynxinterview.di
 import android.content.Context
 import androidx.room.Room
 import com.morarafrank.compulynxinterview.data.local.CompulynxDb
-import com.morarafrank.compulynxinterview.data.local.dao.TransactionsDao
 import com.morarafrank.compulynxinterview.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -32,7 +31,13 @@ class RoomDbModule {
     // Transaction Dao
     @Provides
     @Singleton
-    fun provideTransactionDao(db: CompulynxDb) = db.transactionDao()
+    fun provideTransactionDao(db: CompulynxDb) = db.transactionsDao()
+
+
+    // Customer Dao
+    @Provides
+    @Singleton
+    fun providesCustomerDao(db: CompulynxDb) = db.customerDao()
 
 
 }

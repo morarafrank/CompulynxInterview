@@ -1,4 +1,4 @@
-package com.morarafrank.compulynxinterview.data.local.dao
+package com.morarafrank.compulynxinterview.data.local.transaction
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,10 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.morarafrank.compulynxinterview.data.local.model.Transaction
 import kotlinx.coroutines.flow.Flow
+import com.morarafrank.compulynxinterview.utils.Constants
 
-typealias Transactions = List<Transaction>
 @Dao
 interface TransactionsDao {
 

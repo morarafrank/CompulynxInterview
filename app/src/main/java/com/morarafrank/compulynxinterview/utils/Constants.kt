@@ -8,4 +8,7 @@ object Constants {
         const val SHARED_PREF_NAME = "compulynx_shared_pref"
     }
 
+    const val TRANSACTIONS_TABLE = "transactions"
+    const val CUSTOMER_TABLE = "customers"
+
 }
