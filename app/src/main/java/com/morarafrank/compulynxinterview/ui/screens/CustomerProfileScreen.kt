@@ -147,7 +147,6 @@ fun CustomerProfileScreen(
 //                        modifier = modifier.padding(4.dp)
                     )
                 }
-
             }
         }
     )

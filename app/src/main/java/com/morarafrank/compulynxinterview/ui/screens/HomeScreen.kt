@@ -1,5 +1,6 @@
 package com.morarafrank.compulynxinterview.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -64,8 +69,10 @@ fun HomeScreen(
             ) {
 
 
+                var showBalance by remember{ mutableStateOf(false) }
                 Row(
-                    modifier = modifier.fillMaxWidth()
+                    modifier = modifier
+                        .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement
@@ -84,8 +91,6 @@ fun HomeScreen(
                         modifier = modifier.padding(4.dp),
                         fontSize = 20.sp
                     )
-
-
                 }
                 Row (
                     modifier = Modifier
@@ -95,16 +100,27 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ){
 
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.weight(0.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
+                    AnimatedVisibility(visible = showBalance) {
+
                         Text(
                             text = stringResource(id = R.string.balance),
                             fontFamily = fontFamily,
                             modifier = modifier.padding(4.dp)
                         )
+                    }
+
+                    AnimatedVisibility(visible = !showBalance) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.weight(0.5f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.balance),
+                                fontFamily = fontFamily,
+                                modifier = modifier.padding(4.dp)
+                            )
+                        }
                     }
 
                     Button(
@@ -118,9 +134,6 @@ fun HomeScreen(
                             modifier = modifier.padding(4.dp)
                         )
                     }
-
-
-                    
                 }
 
                 Row (
@@ -156,8 +169,6 @@ fun HomeScreen(
                         )
                     }
 
-
-
                 }
 
                 Row (
@@ -191,9 +202,7 @@ fun HomeScreen(
                             modifier = modifier.padding(4.dp)
                         )
                     }
-
                 }
-
             }
         }
     )
