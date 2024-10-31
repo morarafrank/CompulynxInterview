@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,20 +27,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.R
+import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
+import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-//    navigateBack: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     navigateToCustomerProfile: () -> Unit,
     navigateToLastTransactions: () -> Unit,
     navigateToSendMoney: () -> Unit,
-    navigateToStatement: () -> Unit
+    navigateToStatement: () -> Unit,
+    viewModel: CompulynxViewModel = hiltViewModel()
 ) {
+
+    val showBalanceUiState by viewModel.checkBalanceUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -68,8 +76,9 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-
                 var showBalance by remember{ mutableStateOf(false) }
+                var customerId by remember{ mutableStateOf("") }
+
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
@@ -103,7 +112,7 @@ fun HomeScreen(
                     AnimatedVisibility(visible = showBalance) {
 
                         Text(
-                            text = stringResource(id = R.string.balance),
+                            text = viewModel.balance ?: "0",
                             fontFamily = fontFamily,
                             modifier = modifier.padding(4.dp)
                         )
@@ -111,7 +120,10 @@ fun HomeScreen(
 
                     AnimatedVisibility(visible = !showBalance) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                viewModel.checkBalance(customerID = customerId)
+//                                showBalance = !showBalance
+                            },
                             modifier = Modifier.weight(0.5f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
@@ -124,7 +136,9 @@ fun HomeScreen(
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigateToSendMoney()
+                        },
                         modifier = Modifier.weight(0.5f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -145,7 +159,9 @@ fun HomeScreen(
                 ){
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigateToStatement()
+                        },
                         modifier = Modifier.weight(0.5f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -157,7 +173,9 @@ fun HomeScreen(
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigateToLastTransactions()
+                        },
                         modifier = Modifier.weight(0.5f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -180,7 +198,9 @@ fun HomeScreen(
                 ){
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigateToCustomerProfile()
+                        },
                         modifier = Modifier.weight(0.5f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -192,7 +212,11 @@ fun HomeScreen(
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+//                            logout()
+                            CompulynxAndroidInterviewSharedPrefs.setIsLoggedIn(false)
+                            navigateBack()
+                        },
                         modifier = Modifier.weight(0.5f),
                         shape = RoundedCornerShape(8.dp)
                     ) {

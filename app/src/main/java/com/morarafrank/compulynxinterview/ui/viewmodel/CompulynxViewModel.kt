@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.morarafrank.compulynxinterview.data.local.customer.Customer
+import com.morarafrank.compulynxinterview.data.local.customer.Customers
 import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
 import com.morarafrank.compulynxinterview.data.local.transaction.Transactions
 import com.morarafrank.compulynxinterview.data.remote.model.AccountBalanceResponse
@@ -48,6 +49,8 @@ class CompulynxViewModel @Inject constructor(
     private val _checkBalanceUiState = MutableStateFlow<Resource<AccountBalanceResponse>>(Resource.Loading)
     val checkBalanceUiState = _checkBalanceUiState.asStateFlow()
 
+    var balance: String = ""
+
     private val _last100TransactionsUiState = MutableStateFlow<Resource<Last100TransactionsResponse>>(Resource.Loading)
     val last100TransactionsUiState = _last100TransactionsUiState.asStateFlow()
 
@@ -60,9 +63,9 @@ class CompulynxViewModel @Inject constructor(
         get() = _roomTransactions
 
 
-//    private val _customer = MutableStateFlow<Customer>(Customer())
-//    val customer: StateFlow<Customer>
-//        get() = _customer
+    private val _customers = MutableStateFlow<Customers>(emptyList())
+    val customers: StateFlow<Customers>
+        get() = _customers
 
 
     fun login(loginBody: LoginBody) = viewModelScope.launch {
@@ -123,6 +126,7 @@ class CompulynxViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _checkBalanceUiState.value = Resource.Success(response.data)
+                    balance = response.data.data
                 }
 
                 is Resource.Error -> {
@@ -186,6 +190,12 @@ class CompulynxViewModel @Inject constructor(
             }
         }catch (e: Exception){
             _roomTransactions.value = emptyList()
+        }
+    }
+
+    fun getCustomer() = viewModelScope.launch {
+        repository.getCustomer().collectLatest { customers ->
+            _customers.value = customers
         }
     }
 

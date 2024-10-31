@@ -44,6 +44,9 @@ fun CompulynxInterviewNavGraph(
                 },
                 navigateToLastTransactions = {
                     navController.navigate(Screens.LastTransactions.route)
+                },
+                navigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -20,5 +20,5 @@ data class Last100Transaction(
     val accountFrom: String,
     val accountTo: String,
     val amount: String,
-    val date: String
+//    val date: String
 ): Parcelable

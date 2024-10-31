@@ -19,6 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,16 +32,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
+import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomerProfileScreen(
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CompulynxViewModel = hiltViewModel()
 ) {
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getCustomer()
+    }
 
     Scaffold(
         topBar = {
@@ -81,7 +92,7 @@ fun CustomerProfileScreen(
                         fontFamily = fontFamily,
                     )
                     Text(
-                        text = "John Doe",
+                        text = viewModel.customers.value[0].customerName ?: "John Doe",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
                         fontSize = 16.sp
                     )
@@ -97,7 +108,7 @@ fun CustomerProfileScreen(
                         fontFamily = fontFamily,
                     )
                     Text(
-                        text = "156757585",
+                        text = viewModel.customers.value[0].customerId ?: "uy897695",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
                         fontSize = 16.sp
                     )
@@ -112,7 +123,7 @@ fun CustomerProfileScreen(
                         fontFamily = fontFamily,
                     )
                     Text(
-                        text = "uy897695",
+                        text = viewModel.customers.value[0].customerAccount ?: "156757585",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
                         fontSize = 16.sp
                     )
@@ -127,7 +138,7 @@ fun CustomerProfileScreen(
                         fontFamily = fontFamily,
                     )
                     Text(
-                        text = "johndoe@gmail.com",
+                        text = viewModel.customers.value[0].customerEmail ?: "jdoe@gmail.com",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
                         fontSize = 16.sp
                     )
