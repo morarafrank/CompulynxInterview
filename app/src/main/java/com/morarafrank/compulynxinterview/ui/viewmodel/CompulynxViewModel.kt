@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.morarafrank.compulynxinterview.data.local.customer.Customer
+import com.morarafrank.compulynxinterview.data.local.customer.Customers
 import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
 import com.morarafrank.compulynxinterview.data.local.transaction.Transactions
 import com.morarafrank.compulynxinterview.data.remote.model.AccountBalanceResponse
@@ -18,6 +19,7 @@ import com.morarafrank.compulynxinterview.domain.use_cases.CheckAccountBalanceUs
 import com.morarafrank.compulynxinterview.domain.use_cases.GetLast100TransactionsUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.LoginUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.SendMoneyUseCase
+import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
 import com.morarafrank.compulynxinterview.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,8 +47,13 @@ class CompulynxViewModel @Inject constructor(
     private val _sendMoneyUiState = MutableStateFlow<Resource<SendMoneyResponse>>(Resource.Loading)
     val sendMoneyUiState = _sendMoneyUiState.asStateFlow()
 
+    private val _saveSendUiState = MutableStateFlow<Resource<Boolean>>(Resource.Loading)
+    val saveSendUiState = _saveSendUiState.asStateFlow()
+
     private val _checkBalanceUiState = MutableStateFlow<Resource<AccountBalanceResponse>>(Resource.Loading)
     val checkBalanceUiState = _checkBalanceUiState.asStateFlow()
+
+    var balance: String = ""
 
     private val _last100TransactionsUiState = MutableStateFlow<Resource<Last100TransactionsResponse>>(Resource.Loading)
     val last100TransactionsUiState = _last100TransactionsUiState.asStateFlow()
@@ -60,9 +67,9 @@ class CompulynxViewModel @Inject constructor(
         get() = _roomTransactions
 
 
-//    private val _customer = MutableStateFlow<Customer>(Customer())
-//    val customer: StateFlow<Customer>
-//        get() = _customer
+    private val _customers = MutableStateFlow<Customers>(emptyList())
+    val customers: StateFlow<Customers>
+        get() = _customers
 
 
     fun login(loginBody: LoginBody) = viewModelScope.launch {
@@ -76,6 +83,20 @@ class CompulynxViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _loginUiState.value = Resource.Success(response.data)
+
+                    // Add Customer to room database
+                    val customer = response.data.data
+                    CompulynxAndroidInterviewSharedPrefs.saveCustomerId(customer.id)
+                    repository.addCustomer(
+                        Customer(
+                            id = customer.id.toInt(),
+                            customerId = customer.id,
+                            customerName = customer.name,
+                            customerAccount = customer.account,
+                            customerEmail = customer.email
+
+                        )
+                    )
                 }
 
                 is Resource.Error -> {
@@ -86,27 +107,40 @@ class CompulynxViewModel @Inject constructor(
         }catch (e: Exception){
             _loginUiState.value = Resource.Error(e)
         }
-
     }
 
-    fun sendMoney(sendMoneyBody: SendMoneyBody) = viewModelScope.launch {
+    fun sendMoney(
+        sendMoneyBody: SendMoneyBody,
+        sendTransaction: Transaction
+    ) = viewModelScope.launch {
 
         try {
             _sendMoneyUiState.value = Resource.Loading
 
-            when(val response = sendMoneyUseCase(sendMoneyBody)){
+            when(val saveSendTransaction = repository.saveSendTransaction(sendTransaction)){
                 is Resource.Loading -> {
-                    _sendMoneyUiState.value = Resource.Loading
+                    _saveSendUiState.value = Resource.Loading
                 }
                 is Resource.Success -> {
-                    _sendMoneyUiState.value = Resource.Success(response.data)
-                }
+                    _saveSendUiState.value = Resource.Success(true)
 
+                    when(val response = sendMoneyUseCase(sendMoneyBody)){
+                        is Resource.Loading -> {
+                            _sendMoneyUiState.value = Resource.Loading
+                        }
+                        is Resource.Success -> {
+                            _sendMoneyUiState.value = Resource.Success(response.data)
+                        }
+
+                        is Resource.Error -> {
+                            _sendMoneyUiState.value = Resource.Error(response.throwable)
+                        }
+                    }
+                }
                 is Resource.Error -> {
-                    _sendMoneyUiState.value = Resource.Error(response.throwable)
+                    _saveSendUiState.value = Resource.Error(saveSendTransaction.throwable)
                 }
             }
-
         }catch (e: Exception){
             _sendMoneyUiState.value = Resource.Error(e)
         }
@@ -123,6 +157,7 @@ class CompulynxViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _checkBalanceUiState.value = Resource.Success(response.data)
+                    balance = response.data.data
                 }
 
                 is Resource.Error -> {
@@ -186,6 +221,12 @@ class CompulynxViewModel @Inject constructor(
             }
         }catch (e: Exception){
             _roomTransactions.value = emptyList()
+        }
+    }
+
+    fun getCustomer() = viewModelScope.launch {
+        repository.getCustomer().collectLatest { customers ->
+            _customers.value = customers
         }
     }
 

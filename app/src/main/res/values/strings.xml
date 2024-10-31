@@ -10,4 +10,8 @@
     <string name="send_money_page">Send Money Page</string>
     <string name="statement_page">Statement Page</string>
     <string name="statement">Statement</string>
+    <string name="login">Login</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="login_failed">Login Failed!</string>
+    <string name="try_again">Try Again</string>
 </resources>

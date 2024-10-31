@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -20,6 +21,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,17 +36,26 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.composables.SingleTransactionRow
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
+import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatementScreen(
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CompulynxViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getRoomTransactions()
+    }
+
+    val roomTransactions = viewModel.roomTransactions.collectAsState().value
 
     Scaffold(
         topBar = {
@@ -97,10 +109,18 @@ fun StatementScreen(
                             fontFamily = FontFamily(Font(R.font.dm_sans_bold))
                         )
                     }
-                    items(10){
+//                    items(10){
+//                        SingleTransactionRow(
+//                            transactionId = "TRN001",
+//                            amount = "1000",
+//                            fontFamily = fontFamily
+//                        )
+//                    }
+
+                    items(roomTransactions){ transaction ->
                         SingleTransactionRow(
-                            transactionId = "TRN001",
-                            amount = "1000",
+                            transactionId = transaction.id.toString(),
+                            amount = transaction.amount,
                             fontFamily = fontFamily
                         )
                     }

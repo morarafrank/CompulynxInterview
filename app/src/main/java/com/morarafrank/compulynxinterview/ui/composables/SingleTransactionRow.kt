@@ -13,12 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
+import com.morarafrank.compulynxinterview.data.remote.model.Last100Transaction
 
 @Composable
 fun SingleTransactionRow(
     modifier: Modifier = Modifier,
     transactionId: String,
     amount: String,
+//    transaction: Last100Transaction,
     fontFamily: FontFamily
 ) {
     Row (
