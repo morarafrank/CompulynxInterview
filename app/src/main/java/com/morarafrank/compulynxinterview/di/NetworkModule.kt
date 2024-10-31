@@ -2,6 +2,7 @@ package com.morarafrank.compulynxinterview.di
 
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.morarafrank.compulynxinterview.data.remote.CompulynxService
 import com.morarafrank.compulynxinterview.utils.Constants
 import com.morarafrank.compulynxinterview.utils.Constants.BASE_URL
 import dagger.Module
@@ -50,15 +51,33 @@ object NetworkModule {
     }
 
     @Provides
+    fun provideInterceptors(): Set<Interceptor> {
+        return setOf(
+            Interceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+                chain.proceed(request)
+            }
+        )
+    }
+
+    @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory,
-        @Named("baseUrl") baseUrl: String
+//        @Named("baseUrl") baseUrl: String
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(gsonConverterFactory)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
-            .baseUrl(baseUrl)
+            .baseUrl(Constants.BASE_URL)
             .build()
+
+    // provide compulynx service
+    @Provides
+    fun provideCompulynxService(retrofit: Retrofit): CompulynxService =
+        retrofit.create(CompulynxService::class.java)
 }

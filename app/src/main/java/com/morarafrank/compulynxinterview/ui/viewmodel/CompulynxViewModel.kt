@@ -1,5 +1,6 @@
 package com.morarafrank.compulynxinterview.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -74,8 +75,10 @@ class CompulynxViewModel @Inject constructor(
 
     fun login(loginBody: LoginBody) = viewModelScope.launch {
 
+        _uiState.value = UiState.Idle
         try {
             _loginUiState.value = Resource.Loading
+
 
             when(val response = loginUseCase(loginBody)){
                 is Resource.Loading -> {
@@ -101,6 +104,7 @@ class CompulynxViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _loginUiState.value = Resource.Error(response.throwable)
+                    Log.i("LOGIN ERROR:", response.throwable.toString())
                 }
             }
 

@@ -8,6 +8,11 @@ import com.morarafrank.compulynxinterview.data.local.transaction.TransactionsDao
 import com.morarafrank.compulynxinterview.data.remote.CompulynxService
 import com.morarafrank.compulynxinterview.data.repo.CompulynxRepoImpl
 import com.morarafrank.compulynxinterview.domain.repo.CompulynxRepository
+import com.morarafrank.compulynxinterview.domain.use_cases.CheckAccountBalanceUseCase
+import com.morarafrank.compulynxinterview.domain.use_cases.GetLast100TransactionsUseCase
+import com.morarafrank.compulynxinterview.domain.use_cases.LoginUseCase
+import com.morarafrank.compulynxinterview.domain.use_cases.SendMoneyUseCase
+import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
 import com.morarafrank.compulynxinterview.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -42,6 +47,8 @@ object AppModule {
     @Singleton
     fun providesCustomerDao(db: CompulynxDb) = db.customerDao()
 
+
+
     // Compulynx Repository
     @Provides
     @Singleton
@@ -56,4 +63,56 @@ object AppModule {
             customerDao
         )
     }
+
+    // send money use case
+    @Provides
+    fun provideSendMoneyUseCase(
+        repository: CompulynxRepository
+    ): SendMoneyUseCase {
+        return SendMoneyUseCase(repository)
+    }
+
+    // login use case
+    @Provides
+    fun provideLoginUseCase(
+        repository: CompulynxRepository
+    ): LoginUseCase {
+        return LoginUseCase(repository)
+    }
+
+    // get last 100 transactions use case
+    @Provides
+    fun provideGetLast100TransactionsUseCase(
+        repository: CompulynxRepository
+    ): GetLast100TransactionsUseCase {
+        return GetLast100TransactionsUseCase(repository)
+    }
+
+    // check account balance use case
+    @Provides
+    fun provideCheckAccountBalanceUseCase(
+        repository: CompulynxRepository
+    ): CheckAccountBalanceUseCase {
+        return CheckAccountBalanceUseCase(repository)
+    }
+
+    // Compulynx Viewmodel
+    @Provides
+    @Singleton
+    fun provideCompulynxViewModel(
+        loginUseCase: LoginUseCase,
+        getLast100TransactionsUseCase: GetLast100TransactionsUseCase,
+        sendMoneyUseCase: SendMoneyUseCase,
+        checkBalanceUseCase: CheckAccountBalanceUseCase,
+        repository: CompulynxRepository
+    ): CompulynxViewModel {
+        return CompulynxViewModel(
+            loginUseCase,
+            getLast100TransactionsUseCase,
+            sendMoneyUseCase,
+            checkBalanceUseCase,
+            repository
+        )
+    }
+
 }

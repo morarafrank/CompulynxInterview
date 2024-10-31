@@ -1,4 +1,3 @@
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -8,12 +7,11 @@ plugins {
     id ("kotlin-parcelize")
     // Parcelable
     id ("dagger.hilt.android.plugin")
-//    id 'com.google.gms.google-services'
 }
 
 android {
     namespace = "com.morarafrank.compulynxinterview"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.morarafrank.compulynxinterview"
@@ -62,9 +60,9 @@ dependencies {
 
     val compose_version = "1.1.0-alpha04"
     val retrofit_version = "2.9.0"
-    val okhttp_version = "4.12.0"
+    val okhttp_version = "4.9.2"
     val coil_version = "1.4.0"
-    val room_version = "2.6.1"
+    val room_version = "2.5.0"
     val shared_preferences_version = "1.1.1"
     val datastore_version = "1.0.0"
     val hilt_version = "2.44.2"
@@ -89,7 +87,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Retrofit
+
+        // Retrofit
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
@@ -97,10 +96,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
-
-    // JSON Parsing
-    implementation ("com.google.code.gson:gson:2.10.1")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //    Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
@@ -136,11 +131,6 @@ dependencies {
     // Work Manager
     implementation("androidx.work:work-runtime-ktx:$workmanager_version")
 
-//    // ViewModel
-//    implementation"androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-//    implementation"androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-//    implementation"androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
-
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     // ViewModel utilities for Compose
@@ -159,23 +149,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    // Firebase
-//    implementationplatform('com.google.firebase:firebase-bom:28.4.2')
-//    implementation'com.google.firebase:firebase-analytics-ktx'
-//    implementation'com.google.firebase:firebase-crashlytics-ktx'
-
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.5.3")
-
-//    implementation"com.google.accompanist:accompanist-glide:0.16.0"
-//    implementation"com.github.bumptech.glide:glide:4.14.2"
-//    kapt "com.github.bumptech.glide:compiler:4.12.0"
 
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
-
-
-    // Timber
+        // Timber
     implementation ("com.jakewharton.timber:timber:5.0.1")
+
+        // JSON Parsing
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 }

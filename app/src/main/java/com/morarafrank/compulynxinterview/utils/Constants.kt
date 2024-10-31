@@ -1,7 +1,9 @@
 package com.morarafrank.compulynxinterview.utils
 
 object Constants {
-    const val BASE_URL = ""
+    const val BASE_URL = "https://localhost:8092/springboot-rest-api/h2-console/"
+//    const val BASE_URL = "http://localhost:8092/springboot-rest-api/"
+
     const val DATABASE_NAME = "compulynx_db"
 
     object Preferences {

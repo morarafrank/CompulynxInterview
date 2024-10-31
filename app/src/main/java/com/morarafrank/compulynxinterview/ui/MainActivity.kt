@@ -15,7 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import com.morarafrank.compulynxinterview.ui.navigation.CompulynxInterviewNavGraph
 import com.morarafrank.compulynxinterview.ui.theme.ComposeTemplateTheme
 import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
