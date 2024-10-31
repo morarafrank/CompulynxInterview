@@ -12,11 +12,11 @@ plugins {
 }
 
 android {
-    namespace = "com.morarafrank.composetemplate"
-    compileSdk = 33
+    namespace = "com.morarafrank.compulynxinterview"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.morarafrank.composetemplate"
+        applicationId = "com.morarafrank.compulynxinterview"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
@@ -62,9 +62,9 @@ dependencies {
 
     val compose_version = "1.1.0-alpha04"
     val retrofit_version = "2.9.0"
-    val okhttp_version = "4.9.2"
+    val okhttp_version = "4.12.0"
     val coil_version = "1.4.0"
-    val room_version = "2.5.0"
+    val room_version = "2.6.1"
     val shared_preferences_version = "1.1.1"
     val datastore_version = "1.0.0"
     val hilt_version = "2.44.2"
@@ -91,8 +91,16 @@ dependencies {
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
     // OkHttp
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+
+    // JSON Parsing
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //    Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
@@ -165,4 +173,9 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
+
+
+    // Timber
+    implementation ("com.jakewharton.timber:timber:5.0.1")
 }
