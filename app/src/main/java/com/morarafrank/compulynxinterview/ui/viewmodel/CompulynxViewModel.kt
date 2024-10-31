@@ -19,6 +19,7 @@ import com.morarafrank.compulynxinterview.domain.use_cases.CheckAccountBalanceUs
 import com.morarafrank.compulynxinterview.domain.use_cases.GetLast100TransactionsUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.LoginUseCase
 import com.morarafrank.compulynxinterview.domain.use_cases.SendMoneyUseCase
+import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
 import com.morarafrank.compulynxinterview.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,6 +46,9 @@ class CompulynxViewModel @Inject constructor(
 
     private val _sendMoneyUiState = MutableStateFlow<Resource<SendMoneyResponse>>(Resource.Loading)
     val sendMoneyUiState = _sendMoneyUiState.asStateFlow()
+
+    private val _saveSendUiState = MutableStateFlow<Resource<Boolean>>(Resource.Loading)
+    val saveSendUiState = _saveSendUiState.asStateFlow()
 
     private val _checkBalanceUiState = MutableStateFlow<Resource<AccountBalanceResponse>>(Resource.Loading)
     val checkBalanceUiState = _checkBalanceUiState.asStateFlow()
@@ -79,6 +83,20 @@ class CompulynxViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _loginUiState.value = Resource.Success(response.data)
+
+                    // Add Customer to room database
+                    val customer = response.data.data
+                    CompulynxAndroidInterviewSharedPrefs.saveCustomerId(customer.id)
+                    repository.addCustomer(
+                        Customer(
+                            id = customer.id.toInt(),
+                            customerId = customer.id,
+                            customerName = customer.name,
+                            customerAccount = customer.account,
+                            customerEmail = customer.email
+
+                        )
+                    )
                 }
 
                 is Resource.Error -> {
@@ -89,27 +107,40 @@ class CompulynxViewModel @Inject constructor(
         }catch (e: Exception){
             _loginUiState.value = Resource.Error(e)
         }
-
     }
 
-    fun sendMoney(sendMoneyBody: SendMoneyBody) = viewModelScope.launch {
+    fun sendMoney(
+        sendMoneyBody: SendMoneyBody,
+        sendTransaction: Transaction
+    ) = viewModelScope.launch {
 
         try {
             _sendMoneyUiState.value = Resource.Loading
 
-            when(val response = sendMoneyUseCase(sendMoneyBody)){
+            when(val saveSendTransaction = repository.saveSendTransaction(sendTransaction)){
                 is Resource.Loading -> {
-                    _sendMoneyUiState.value = Resource.Loading
+                    _saveSendUiState.value = Resource.Loading
                 }
                 is Resource.Success -> {
-                    _sendMoneyUiState.value = Resource.Success(response.data)
-                }
+                    _saveSendUiState.value = Resource.Success(true)
 
+                    when(val response = sendMoneyUseCase(sendMoneyBody)){
+                        is Resource.Loading -> {
+                            _sendMoneyUiState.value = Resource.Loading
+                        }
+                        is Resource.Success -> {
+                            _sendMoneyUiState.value = Resource.Success(response.data)
+                        }
+
+                        is Resource.Error -> {
+                            _sendMoneyUiState.value = Resource.Error(response.throwable)
+                        }
+                    }
+                }
                 is Resource.Error -> {
-                    _sendMoneyUiState.value = Resource.Error(response.throwable)
+                    _saveSendUiState.value = Resource.Error(saveSendTransaction.throwable)
                 }
             }
-
         }catch (e: Exception){
             _sendMoneyUiState.value = Resource.Error(e)
         }

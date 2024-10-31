@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +42,8 @@ import com.morarafrank.compulynxinterview.data.remote.model.LoginBody
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
 import com.morarafrank.compulynxinterview.ui.viewmodel.UiState
+import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
+import com.morarafrank.compulynxinterview.utils.UiUtils
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,8 +55,9 @@ fun LoginScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
-    val loginState by viewModel.loginUiState.collectAsState()
+//    val loginState by viewModel.loginUiState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -77,6 +81,7 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var customerId by remember { mutableStateOf("") }
+//                var customerId = CompulynxAndroidInterviewSharedPrefs.getCustomerId()
                 var pin by remember { mutableStateOf("") }
 
                 TextField(
@@ -95,8 +100,10 @@ fun LoginScreen(
                     },
                     modifier = modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "PIN",
-                            fontFamily = fontFamily)
+                        Text(
+                            text = "PIN",
+                            fontFamily = fontFamily
+                        )
                     }
                 )
 
@@ -133,15 +140,13 @@ fun LoginScreen(
                                 fontFamily = fontFamily,
                             )
                             LaunchedEffect(Unit) {
-                                delay(3000)
+                                delay(1500)
+                                CompulynxAndroidInterviewSharedPrefs.setIsLoggedIn(true)
                                 navigateToHome()
                             }
                         }
                         is UiState.Error -> {
-                            Text(
-                                stringResource(id = R.string.login_failed),
-                                fontFamily = fontFamily,
-                            )
+                            UiUtils.showToast("Login Failed", context)
                             viewModel.resetUiState()
                         }
                     }

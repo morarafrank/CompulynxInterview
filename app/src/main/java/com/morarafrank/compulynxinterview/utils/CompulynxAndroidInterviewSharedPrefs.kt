@@ -5,26 +5,40 @@ import android.content.SharedPreferences
 
 object CompulynxAndroidInterviewSharedPrefs {
 
-    private lateinit var inventorySharedPrefs: SharedPreferences
+    private lateinit var sharedPrefs: SharedPreferences
     fun initSharedPrefs(context: Context) {
-        inventorySharedPrefs = context.getSharedPreferences(
+        sharedPrefs = context.getSharedPreferences(
             Constants.Preferences.SHARED_PREF_NAME, Context.MODE_PRIVATE
         )
     }
 
     fun clearInventorySharedPrefs() {
-        val editor = inventorySharedPrefs.edit()
+        val editor = sharedPrefs.edit()
         editor.clear()
         editor.apply()
     }
 
     fun setIsLoggedIn(isLoggedIn: Boolean) {
-        val editor = inventorySharedPrefs.edit()
+        val editor = sharedPrefs.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
         editor.apply()
     }
 
     fun getIsLoggedIn(): Boolean {
-        return inventorySharedPrefs.getBoolean("isLoggedIn", false)
+        return sharedPrefs.getBoolean("isLoggedIn", false)
+    }
+
+    fun saveCustomerId(customerID: String) {
+        val editor = sharedPrefs.edit()
+        editor.putString("customerID", customerID)
+        editor.apply()
+    }
+
+    fun getCustomerId(): String {
+        return if (sharedPrefs.contains("customerID")) {
+            sharedPrefs.getString("customerID", "")!!
+        }else{
+            ""
+        }
     }
 }

@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
+import com.morarafrank.compulynxinterview.ui.viewmodel.UiState
 import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
 
 //@Preview
@@ -114,7 +118,8 @@ fun HomeScreen(
                         Text(
                             text = viewModel.balance ?: "0",
                             fontFamily = fontFamily,
-                            modifier = modifier.padding(4.dp)
+                            modifier = modifier.padding(4.dp),
+                            fontSize = 18.sp
                         )
                     }
 
@@ -127,11 +132,31 @@ fun HomeScreen(
                             modifier = Modifier.weight(0.5f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text(
-                                text = stringResource(id = R.string.balance),
-                                fontFamily = fontFamily,
-                                modifier = modifier.padding(4.dp)
-                            )
+                            when(uiState){
+                                is UiState.Idle -> {
+                                    Text(
+                                        text = stringResource(id = R.string.balance),
+                                        fontFamily = fontFamily,
+                                        modifier = modifier.padding(4.dp)
+                                    )
+                                }
+                                is UiState.Loading -> {
+                                    CircularProgressIndicator(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                is UiState.Success -> {
+                                    showBalance = !showBalance
+                                }
+                                is UiState.Error -> {
+                                    Text(
+                                        text = stringResource(id = R.string.try_again),
+                                        fontFamily = fontFamily,
+                                        modifier = modifier.padding(4.dp)
+                                    )
+                                }
+                            }
                         }
                     }
 
