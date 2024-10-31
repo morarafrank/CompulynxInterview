@@ -1,7 +1,5 @@
 package com.morarafrank.compulynxinterview.domain.model
 
-import com.morarafrank.compulynxinterview.data.remote.model.Customer
-
 //data class Customer(
 //    val id: String,
 //    val name: String,
