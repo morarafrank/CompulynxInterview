@@ -13,11 +13,11 @@ import com.morarafrank.compulynxinterview.utils.Constants
 interface TransactionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addTransaction(transaction: Transaction)
+    suspend fun addTransaction(transaction: LocalTransaction)
 
     @Delete
-    suspend fun deleteTransaction(transaction: Transaction)
+    suspend fun deleteTransaction(transaction: LocalTransaction)
 
     @Query("SELECT * FROM transactions")
-    fun getAllTransactions(): Flow<Transactions>
+    fun getAllTransactions(): Flow<LocalTransactions>
 }

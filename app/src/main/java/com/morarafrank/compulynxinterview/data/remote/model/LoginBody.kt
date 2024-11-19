@@ -1,26 +1,29 @@
 package com.morarafrank.compulynxinterview.data.remote.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class LoginBody(
     val customerId: String,
     val pin: String
-): Parcelable
+)
 
-@Parcelize
+
+
+@Serializable
 data class LoginResponse(
-    val message: String,
-    val data: _Customer,
-    val status: Int
-) : Parcelable
+    val customerName: String,
+    val customerId: String,
+    val email: String,
+    val account: String,
+)
 
-@Parcelize
+
+@Serializable
 data class _Customer(
     val id: String,
     val name: String,
     val account: String,
     val email: String,
     val pin: String
-): Parcelable
+)

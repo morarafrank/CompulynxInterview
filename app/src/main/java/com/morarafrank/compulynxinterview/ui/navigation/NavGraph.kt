@@ -22,6 +22,8 @@ fun CompulynxInterviewNavGraph(
         startDestination = if (isSignedIn) Screens.Home.route else Screens.Login.route
     ){
 
+
+
         composable(Screens.Login.route){
 
             LoginScreen(
@@ -46,7 +48,11 @@ fun CompulynxInterviewNavGraph(
                     navController.navigate(Screens.LastTransactions.route)
                 },
                 navigateBack = {
-                    navController.popBackStack()
+                    navController.navigate(Screens.Login.route){
+                        popUpTo(Screens.Home.route){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

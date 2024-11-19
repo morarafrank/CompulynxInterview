@@ -1,19 +1,19 @@
 package com.morarafrank.compulynxinterview.data.remote.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class SendMoneyBody(
+    val customerId: String,
+    val accountFrom: String,
     val accountTo: String,
-    val amount: String
-): Parcelable
+    val amount: Int
+)
 
 
-@Parcelize
+@Serializable
 data class SendMoneyResponse(
-    val message: String,
-    val data: String,
-    val status: Int
+    val response_status: Boolean,
+    val response_message: String
 
-): Parcelable
+)

@@ -47,7 +47,6 @@ fun LoginScreen(
 ) {
 
     val loginState by viewModel.loginUiState.collectAsState()
-//    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     Scaffold(
@@ -112,28 +111,29 @@ fun LoginScreen(
                 ) {
 
                     when(loginState){
-//                        is Resource.Idle -> {
-//                            Text(
-//                                text = stringResource(id = R.string.login),
-//                                fontFamily = fontFamily,
-//                                modifier = modifier.padding(8.dp)
-//                            )
-//                        }
-                        is Resource.Loading -> {
-//                            CircularProgressIndicator(
-//                                color = MaterialTheme.colorScheme.onPrimary,
-//                                modifier = Modifier.size(24.dp)
-//                            )
+                        is Resource.Idle -> {
                             Text(
                                 text = stringResource(id = R.string.login),
                                 fontFamily = fontFamily,
                                 modifier = modifier.padding(8.dp)
                             )
                         }
+                        is Resource.Loading -> {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+//                            Text(
+//                                text = stringResource(id = R.string.login),
+//                                fontFamily = fontFamily,
+//                                modifier = modifier.padding(8.dp)
+//                            )
+                        }
                         is Resource.Success -> {
                             Text(
                                 stringResource(id = R.string.login_successful),
                                 fontFamily = fontFamily,
+                                modifier = modifier.padding(4.dp)
                             )
                             LaunchedEffect(Unit) {
                                 delay(1500)
@@ -145,9 +145,12 @@ fun LoginScreen(
                             Text(
                                 text = stringResource(id = R.string.login_failed),
                                 fontFamily = fontFamily,
-                                modifier = modifier.padding(8.dp)
+                                modifier = modifier.padding(4.dp)
                             )
                             UiUtils.showToast("Login Failed", context)
+                            LaunchedEffect(Unit) {
+                                delay(3000)
+                            }
                             viewModel.resetUiState()
                         }
                     }

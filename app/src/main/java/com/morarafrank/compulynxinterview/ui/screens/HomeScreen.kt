@@ -17,25 +17,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.R
+import com.morarafrank.compulynxinterview.ui.theme.boldFont
+import com.morarafrank.compulynxinterview.ui.theme.regularFont
 import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
-import com.morarafrank.compulynxinterview.ui.viewmodel.UiState
 import com.morarafrank.compulynxinterview.utils.CompulynxAndroidInterviewSharedPrefs
+import com.morarafrank.compulynxinterview.utils.Resource
+import kotlinx.coroutines.delay
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,8 +51,11 @@ fun HomeScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
-    val showBalanceUiState by viewModel.checkBalanceUiState.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
+    val checkBalanceUiState by viewModel.checkBalanceUiState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.getCustomer()
+    }
+
 
     Scaffold(
         topBar = {
@@ -64,7 +68,7 @@ fun HomeScreen(
                         Text(
                             text = stringResource(id = R.string.home_page),
                             fontSize = 18.sp,
-                            fontFamily = fontFamily
+                            fontFamily = regularFont
                         )
                     }
                 }
@@ -81,7 +85,9 @@ fun HomeScreen(
             ) {
 
                 var showBalance by remember{ mutableStateOf(false) }
-                var customerId by remember{ mutableStateOf("") }
+//                var customerId by remember{ mutableStateOf("") }
+//                var balance by rememberSaveable{ mutableStateOf(viewModel.balance) }
+                var balance by rememberSaveable{ mutableStateOf("") }
 
                 Row(
                     modifier = modifier
@@ -93,68 +99,80 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = "WELCOME",
-                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
+                        fontFamily = regularFont,
                         modifier = modifier.padding(4.dp),
-                        fontSize = 20.sp
                     )
                     Text(
-                        text = "Morara Frank",
-//                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontFamily = fontFamily,
-                        modifier = modifier.padding(4.dp),
-                        fontSize = 20.sp
+                        text = viewModel.customer?.customerName.toString(),
+                        fontFamily = boldFont
                     )
                 }
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ){
 
-                    AnimatedVisibility(visible = showBalance) {
+                    AnimatedVisibility(
+                        visible = showBalance,
+                        modifier = modifier.weight(1f)
+                            .padding(8.dp)
+                    ) {
 
                         Text(
-                            text = viewModel.balance ?: "0",
-                            fontFamily = fontFamily,
+                            text = balance,
+                            fontFamily = regularFont,
                             modifier = modifier.padding(4.dp),
                             fontSize = 18.sp
                         )
                     }
 
-                    AnimatedVisibility(visible = !showBalance) {
+                    AnimatedVisibility(
+                        visible = !showBalance,
+                        modifier = modifier.weight(1f)
+                            .padding(8.dp)
+                    ) {
                         Button(
                             onClick = {
-                                viewModel.checkBalance(customerID = customerId)
-//                                showBalance = !showBalance
+                                viewModel.checkBalance()
+                                showBalance = !showBalance
                             },
-                            modifier = Modifier.weight(0.5f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            when(uiState){
-                                is UiState.Idle -> {
+                            when(checkBalanceUiState){
+                                is Resource.Idle -> {
                                     Text(
                                         text = stringResource(id = R.string.balance),
-                                        fontFamily = fontFamily,
+                                        fontFamily = regularFont,
                                         modifier = modifier.padding(4.dp)
                                     )
                                 }
-                                is UiState.Loading -> {
+                                is Resource.Loading -> {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.size(24.dp)
                                     )
                                 }
-                                is UiState.Success -> {
-                                    showBalance = !showBalance
+                                is Resource.Success -> {
+                                    balance = viewModel.balance
+                                    LaunchedEffect(Unit) {
+                                        delay(10000)
+                                        viewModel.resetUiState()
+                                    }
                                 }
-                                is UiState.Error -> {
+
+                                is Resource.Error -> {
                                     Text(
                                         text = stringResource(id = R.string.try_again),
-                                        fontFamily = fontFamily,
+                                        fontFamily = regularFont,
                                         modifier = modifier.padding(4.dp)
                                     )
+                                    LaunchedEffect(Unit) {
+                                        delay(5000)
+                                        viewModel.resetUiState()
+                                    }
                                 }
                             }
                         }
@@ -164,13 +182,14 @@ fun HomeScreen(
                         onClick = {
                             navigateToSendMoney()
                         },
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(1f).padding(8.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.send_money),
-                            fontFamily = fontFamily,
-                            modifier = modifier.padding(4.dp)
+                            fontFamily = regularFont,
+                            fontSize = 12.sp,
+                            modifier = modifier.padding(8.dp)
                         )
                     }
                 }
@@ -179,7 +198,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ){
 
@@ -187,13 +206,14 @@ fun HomeScreen(
                         onClick = {
                             navigateToStatement()
                         },
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.view_statement),
-                            fontFamily = fontFamily,
-                            modifier = modifier.padding(4.dp)
+                            fontFamily = regularFont,
+                            fontSize = 12.sp,
+                            modifier = modifier.padding(8.dp)
                         )
                     }
 
@@ -201,14 +221,14 @@ fun HomeScreen(
                         onClick = {
                             navigateToLastTransactions()
                         },
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.last_transactions),
-                            fontFamily = fontFamily,
-                            fontSize = 13.sp,
-                            modifier = modifier.padding(4.dp)
+                            fontFamily = regularFont,
+                            fontSize = 12.sp,
+                            modifier = modifier.padding(8.dp)
                         )
                     }
 
@@ -218,7 +238,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ){
 
@@ -226,33 +246,49 @@ fun HomeScreen(
                         onClick = {
                             navigateToCustomerProfile()
                         },
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.profile),
-                            fontFamily = fontFamily,
-                            modifier = modifier.padding(4.dp)
+                            fontFamily = regularFont,
+                            fontSize = 12.sp,
+                            modifier = modifier.padding(8.dp)
                         )
                     }
 
                     Button(
                         onClick = {
-//                            logout()
-                            CompulynxAndroidInterviewSharedPrefs.setIsLoggedIn(false)
+
+                            viewModel.logOut()
+
                             navigateBack()
                         },
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.logout),
-                            fontFamily = fontFamily,
-                            modifier = modifier.padding(4.dp)
+                            fontFamily = regularFont,
+                            fontSize = 12.sp,
+                            modifier = modifier.padding(8.dp)
                         )
                     }
                 }
             }
         }
+    )
+}
+
+//@Preview
+@Composable
+private fun PreviewHome() {
+
+    HomeScreen(
+        navigateBack = {},
+        navigateToCustomerProfile = {},
+        navigateToStatement = {},
+        navigateToLastTransactions = {},
+        navigateToSendMoney = {},
     )
 }

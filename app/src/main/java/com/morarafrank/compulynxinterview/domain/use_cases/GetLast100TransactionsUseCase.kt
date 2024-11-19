@@ -7,9 +7,5 @@ class GetLast100TransactionsUseCase @Inject constructor(
     private val repository: CompulynxRepository
 ) {
 
-    operator fun invoke(
-        customerID: String
-    ) = repository.getLast100Transactions(
-        customerID
-    )
+    operator fun invoke() = repository.getLast100Transactions()
 }

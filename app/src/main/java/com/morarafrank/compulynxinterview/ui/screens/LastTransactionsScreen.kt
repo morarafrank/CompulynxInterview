@@ -1,15 +1,13 @@
 package com.morarafrank.compulynxinterview.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,19 +17,24 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morarafrank.compulynxinterview.R
-import com.morarafrank.compulynxinterview.ui.composables.SingleTransactionRow
+import com.morarafrank.compulynxinterview.ui.composables.NoDataUi
+import com.morarafrank.compulynxinterview.ui.composables.TransactionsTableUi
+import com.morarafrank.compulynxinterview.ui.composables.generateTransactionList
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
+import com.morarafrank.compulynxinterview.utils.Resource
+import kotlinx.coroutines.delay
+
+// LISTS ALL LAST 100 TRANSACTIONS FOR A SINGLE CUSTOMER
 
 //@Preview
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,10 +47,11 @@ fun LastTransactionsScreen(
 
 
     LaunchedEffect(Unit) {
-        viewModel.getLast100Transactions(customerID = "CUST001")
+        viewModel.getLast100Transactions()
     }
 
-    val last100Transactions = viewModel.transactions.collectAsState().value
+
+    val transactions = viewModel.last100Transactions.collectAsState().value
 
     Scaffold(
         topBar = {
@@ -68,64 +72,42 @@ fun LastTransactionsScreen(
                     IconButton(onClick = {
                         navigateBack()
                     }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back IconButton")
+                        Icon(painter = painterResource(R.drawable.ic_arrow_back), contentDescription = "Back IconButton")
                     }
                 }
             )
         },
         content = {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
 
 
-                Text(
-                    text = "LAST 100 TRANSACTIONS",
-                    fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                    modifier = modifier.padding(4.dp),
-                    fontSize = 20.sp
-                )
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
 
-                    item {
-                        SingleTransactionRow(
-                            transactionId = "Account To",
-                            amount = "Amount",
-                            fontFamily = FontFamily(Font(R.font.dm_sans_bold))
+            when(transactions){
+                is Resource.Idle -> {}
+                is Resource.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = modifier.size(50.dp),
+                    )
+                }
+                is Resource.Success -> {
+                    if (transactions.data.isEmpty()){
+                        NoDataUi(
+                            error = "No transactions found"
+                        )
+                    }else{
+                        TransactionsTableUi(
+                            modifier = modifier.padding(it).padding(16.dp),
+                            transactions = transactions.data
                         )
                     }
-//                    items(13){
-//                        SingleTransactionRow(
-//                            transactionId = "ACT001",
-//                            amount = "1000",
-//                            fontFamily = fontFamily
-//                        )
-//                    }
-                    items(last100Transactions){ transaction ->
-                        SingleTransactionRow(
-                            transactionId = transaction.accountTo,
-                            amount = transaction.amount,
-                            fontFamily = fontFamily
-                        )
-                    }
-                    item {
-                        SingleTransactionRow(
-                            transactionId = "Total",
-                            amount = last100Transactions.sumOf { transaction ->
-                                transaction.amount.toInt()
-                            }.toString(),
-                            fontFamily = FontFamily(Font(R.font.dm_sans_bold))
-                        )
-                    }
+                }
+                is Resource.Error -> {
+                    NoDataUi(
+                        error = viewModel.errorMessage
+                    )
                 }
             }
         }
     )
 }
+
+

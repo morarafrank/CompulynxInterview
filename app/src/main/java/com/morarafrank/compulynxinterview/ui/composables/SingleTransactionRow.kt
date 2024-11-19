@@ -12,9 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.morarafrank.compulynxinterview.data.local.transaction.Transaction
-import com.morarafrank.compulynxinterview.data.remote.model.Last100Transaction
 
 @Composable
 fun SingleTransactionRow(
@@ -35,9 +34,9 @@ fun SingleTransactionRow(
         verticalAlignment = Alignment.CenterVertically
     ){
 
-        Text(text = transactionId, fontFamily = fontFamily)
-        Text(text = "|", modifier = modifier.fillMaxHeight())
-        Text(text = amount, fontFamily = fontFamily)
+        Text(text = transactionId, fontFamily = fontFamily, modifier = modifier.weight(1f), textAlign = TextAlign.Center)
+        Text(text = "|", modifier = modifier.fillMaxHeight().weight(1f), textAlign = TextAlign.Center)
+        Text(text = amount, fontFamily = fontFamily, modifier = modifier.weight(1f), textAlign = TextAlign.Center)
 
     }
 }

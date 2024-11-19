@@ -15,8 +15,27 @@ val fontFamily = FontFamily(
     Font(R.font.dm_sans_light),
     Font(R.font.dm_sans_semibold),
 )
+val boldFont = FontFamily(Font(R.font.dm_sans_bold))
+val regularFont = FontFamily(Font(R.font.dm_sans_regular))
+val mediumFont = FontFamily(Font(R.font.dm_sans_medium))
+val smallFont = FontFamily(Font(R.font.dm_sans_light))
+
 // Set of Material typography styles to start with
 val Typography = Typography(
+    bodySmall = TextStyle(
+        fontFamily = regularFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Normal,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = regularFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
     bodyLarge = TextStyle(
 //        fontFamily = FontFamily.Default,
         fontFamily = fontFamily,

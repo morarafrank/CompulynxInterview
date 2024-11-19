@@ -7,9 +7,5 @@ class CheckAccountBalanceUseCase @Inject constructor (
     private val repository: CompulynxRepository
 ){
 
-    suspend operator fun invoke(
-        customerId: String
-    ) = repository.checkAccountBalance(
-        customerId
-    )
+    suspend operator fun invoke() = repository.checkAccountBalance()
 }

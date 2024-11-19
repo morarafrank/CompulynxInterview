@@ -41,4 +41,18 @@ object CompulynxAndroidInterviewSharedPrefs {
             ""
         }
     }
+
+    fun saveCustomerAccount(customerAccount: String) {
+        val editor = sharedPrefs.edit()
+        editor.putString("customerAccount", customerAccount)
+        editor.apply()
+    }
+
+    fun getCustomerAccount(): String {
+        return if (sharedPrefs.contains("customerAccount")) {
+            sharedPrefs.getString("customerAccount", "")!!
+        }else{
+            ""
+        }
+    }
 }

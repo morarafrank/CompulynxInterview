@@ -94,7 +94,7 @@ fun CustomerProfileScreen(
                     Text(
                         text = viewModel.customers.value[0].customerName ?: "John Doe",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 16.sp
+                        fontSize = 12.sp
                     )
                 }
 
@@ -110,7 +110,7 @@ fun CustomerProfileScreen(
                     Text(
                         text = viewModel.customers.value[0].customerId ?: "uy897695",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 16.sp
+                        fontSize = 12.sp
                     )
                 }
                 Row(
@@ -125,7 +125,7 @@ fun CustomerProfileScreen(
                     Text(
                         text = viewModel.customers.value[0].customerAccount ?: "156757585",
                         fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 16.sp
+                        fontSize = 12.sp
                     )
                 }
                 Row(
