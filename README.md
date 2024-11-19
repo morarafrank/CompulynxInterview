@@ -128,6 +128,24 @@ com.morarafrank.compulynxinterview
 
 --- 
 
+```markdown
+## Locate the APK
+
+You can find the APK in the following project structure:
+Change to project structure and find the apk in the apk forlder.
+
+com.morarafrank.compulynxinterview
+├── app
+├── build
+├── gradle
+├── apk                  # APK Folder
+│   └── CompulynxApk.apk  # The uploaded APK file
+└── ...
+```
+
+
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
