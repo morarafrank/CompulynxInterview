@@ -128,8 +128,8 @@ com.morarafrank.compulynxinterview
 
 --- 
 
-```markdown
-## Locate the APK
+```
+Locate the APK
 
 You can find the APK in the following project structure:
 Change to project structure and find the apk in the apk forlder.
