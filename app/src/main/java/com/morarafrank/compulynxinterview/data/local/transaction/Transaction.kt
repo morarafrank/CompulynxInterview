@@ -9,7 +9,7 @@ typealias LocalTransactions = List<LocalTransaction>
 
 @Entity(tableName = Constants.TRANSACTIONS_TABLE)
 data class LocalTransaction(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val customerID: String,
     val customerAccount: String,
     val accountTo: String,

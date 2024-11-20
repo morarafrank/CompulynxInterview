@@ -30,4 +30,8 @@ interface CompulynxRepository {
     fun getLast100Transactions(): Flow<Resource<Last100Transactions>>
 
     fun getRoomTransactions(): Flow<LocalTransactions>
+
+    suspend fun deleteAllCustomers(): Resource<Boolean>
+
+    suspend fun deleteAllTransactions(): Resource<Boolean>
 }

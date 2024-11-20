@@ -118,16 +118,12 @@ fun LoginScreen(
                                 modifier = modifier.padding(8.dp)
                             )
                         }
+
                         is Resource.Loading -> {
                             CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(24.dp)
+                                modifier = modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
-//                            Text(
-//                                text = stringResource(id = R.string.login),
-//                                fontFamily = fontFamily,
-//                                modifier = modifier.padding(8.dp)
-//                            )
                         }
                         is Resource.Success -> {
                             Text(
@@ -136,9 +132,10 @@ fun LoginScreen(
                                 modifier = modifier.padding(4.dp)
                             )
                             LaunchedEffect(Unit) {
-                                delay(1500)
+                                delay(500)
                                 CompulynxAndroidInterviewSharedPrefs.setIsLoggedIn(true)
                                 navigateToHome()
+                                viewModel.resetUiState()
                             }
                         }
                         is Resource.Error -> {

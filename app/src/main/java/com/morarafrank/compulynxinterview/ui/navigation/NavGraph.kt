@@ -1,6 +1,7 @@
 package com.morarafrank.compulynxinterview.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,7 +48,7 @@ fun CompulynxInterviewNavGraph(
                 navigateToLastTransactions = {
                     navController.navigate(Screens.LastTransactions.route)
                 },
-                navigateBack = {
+                logout = {
                     navController.navigate(Screens.Login.route){
                         popUpTo(Screens.Home.route){
                             inclusive = true

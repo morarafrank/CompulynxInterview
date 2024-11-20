@@ -20,4 +20,7 @@ interface TransactionsDao {
 
     @Query("SELECT * FROM transactions")
     fun getAllTransactions(): Flow<LocalTransactions>
+
+    @Query("DELETE FROM transactions")
+    suspend fun deleteAllTransactions()
 }

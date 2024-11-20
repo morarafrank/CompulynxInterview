@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.boldFont
 import com.morarafrank.compulynxinterview.ui.theme.regularFont
@@ -42,7 +43,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navigateBack: () -> Unit,
+    logout: () -> Unit,
     modifier: Modifier = Modifier,
     navigateToCustomerProfile: () -> Unit,
     navigateToLastTransactions: () -> Unit,
@@ -51,10 +52,16 @@ fun HomeScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
+    val customer by viewModel.customer.collectAsState()
+    val balance by viewModel.balance.collectAsState()
+
     val checkBalanceUiState by viewModel.checkBalanceUiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.getCustomer()
-    }
+//    LaunchedEffect(customer) {
+//        if (customer == null) {
+//            viewModel.getCustomer()
+//        }
+//    }
+
 
 
     Scaffold(
@@ -85,9 +92,6 @@ fun HomeScreen(
             ) {
 
                 var showBalance by remember{ mutableStateOf(false) }
-//                var customerId by remember{ mutableStateOf("") }
-//                var balance by rememberSaveable{ mutableStateOf(viewModel.balance) }
-                var balance by rememberSaveable{ mutableStateOf("") }
 
                 Row(
                     modifier = modifier
@@ -97,15 +101,19 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement
                         .spacedBy(4.dp, Alignment.CenterHorizontally)
                 ) {
+
                     Text(
                         text = "WELCOME",
                         fontFamily = regularFont,
                         modifier = modifier.padding(4.dp),
                     )
-                    Text(
-                        text = viewModel.customer?.customerName.toString(),
-                        fontFamily = boldFont
-                    )
+                        customer?.let { currentCustomer ->
+                            Text(
+                                text = currentCustomer.customerName,
+                                fontFamily = boldFont,
+                                fontSize = 18.sp
+                            )
+                        }
                 }
                 Row (
                     modifier = Modifier
@@ -116,17 +124,21 @@ fun HomeScreen(
                 ){
 
                     AnimatedVisibility(
-                        visible = showBalance,
+                        visible = showBalance
+//                                && balance != null
+                        ,
                         modifier = modifier.weight(1f)
                             .padding(8.dp)
                     ) {
 
-                        Text(
-                            text = balance,
-                            fontFamily = regularFont,
-                            modifier = modifier.padding(4.dp),
-                            fontSize = 18.sp
-                        )
+                        balance?.let { customerBalance ->
+                            Text(
+                                text = customerBalance,
+                                fontFamily = regularFont,
+                                modifier = modifier.padding(4.dp),
+                                fontSize = 18.sp
+                            )
+                        }
                     }
 
                     AnimatedVisibility(
@@ -149,16 +161,16 @@ fun HomeScreen(
                                         modifier = modifier.padding(4.dp)
                                     )
                                 }
+
                                 is Resource.Loading -> {
                                     CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
                                 is Resource.Success -> {
-                                    balance = viewModel.balance
                                     LaunchedEffect(Unit) {
-                                        delay(10000)
+                                        delay(5000)
                                         viewModel.resetUiState()
                                     }
                                 }
@@ -262,7 +274,7 @@ fun HomeScreen(
 
                             viewModel.logOut()
 
-                            navigateBack()
+                            logout()
                         },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(8.dp)
@@ -277,18 +289,5 @@ fun HomeScreen(
                 }
             }
         }
-    )
-}
-
-//@Preview
-@Composable
-private fun PreviewHome() {
-
-    HomeScreen(
-        navigateBack = {},
-        navigateToCustomerProfile = {},
-        navigateToStatement = {},
-        navigateToLastTransactions = {},
-        navigateToSendMoney = {},
     )
 }

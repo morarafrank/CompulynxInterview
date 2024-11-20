@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -58,8 +59,6 @@ fun StatementScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
-
-
     val roomTransactions by viewModel.roomTransactions.collectAsState()
 
 
@@ -82,7 +81,7 @@ fun StatementScreen(
                     IconButton(onClick = {
                         navigateBack()
                     }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back IconButton")
+                        Icon(painter = painterResource(R.drawable.ic_arrow_back), contentDescription = "Back IconButton")
                     }
                 }
             )
@@ -92,6 +91,10 @@ fun StatementScreen(
                 RoomTransactionsTableUi(
                     modifier = modifier.padding(it).padding(16.dp),
                     transactions = roomTransactions
+                )
+            }else{
+                NoDataUi(
+                    error = "No Transactions Found",
                 )
             }
         }

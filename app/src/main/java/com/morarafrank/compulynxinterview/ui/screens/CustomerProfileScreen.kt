@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.morarafrank.compulynxinterview.R
 import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 import com.morarafrank.compulynxinterview.ui.viewmodel.CompulynxViewModel
@@ -46,11 +48,12 @@ fun CustomerProfileScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.getCustomer()
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.getCustomer()
+//    }
+
+    val customer by viewModel.customer.collectAsState()
 
     Scaffold(
         topBar = {
@@ -91,11 +94,13 @@ fun CustomerProfileScreen(
                         text = "Customer Name: ",
                         fontFamily = fontFamily,
                     )
-                    Text(
-                        text = viewModel.customers.value[0].customerName ?: "John Doe",
-                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 12.sp
-                    )
+                    customer?.let { thisCustomer ->
+                        Text(
+                            text = thisCustomer.customerName,
+                            fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
 
                 Row(
@@ -107,11 +112,13 @@ fun CustomerProfileScreen(
                         text = "Customer ID: ",
                         fontFamily = fontFamily,
                     )
-                    Text(
-                        text = viewModel.customers.value[0].customerId ?: "uy897695",
-                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 12.sp
-                    )
+                    customer?.let { thisCustomer ->
+                        Text(
+                            text = thisCustomer.customerId,
+                            fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
                 Row(
                     modifier = modifier.fillMaxWidth(),
@@ -122,11 +129,13 @@ fun CustomerProfileScreen(
                         text = "Customer Account: ",
                         fontFamily = fontFamily,
                     )
-                    Text(
-                        text = viewModel.customers.value[0].customerAccount ?: "156757585",
-                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 12.sp
-                    )
+                    customer?.let { thisCustomer ->
+                        Text(
+                            text = thisCustomer.customerAccount,
+                            fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
                 Row(
                     modifier = modifier.fillMaxWidth(),
@@ -137,11 +146,13 @@ fun CustomerProfileScreen(
                         text = "Customer Email: ",
                         fontFamily = fontFamily,
                     )
-                    Text(
-                        text = viewModel.customers.value[0].customerEmail ?: "jdoe@gmail.com",
-                        fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
-                        fontSize = 16.sp
-                    )
+                    customer?.let { thisCustomer ->
+                        Text(
+                            text = thisCustomer.customerEmail,
+                            fontFamily = FontFamily(Font(R.font.dm_sans_medium)),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
 
 

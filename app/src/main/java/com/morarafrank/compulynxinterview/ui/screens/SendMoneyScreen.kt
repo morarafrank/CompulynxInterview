@@ -131,9 +131,8 @@ fun SendMoneyScreen(
                             customerId = CompulynxAndroidInterviewSharedPrefs.getCustomerId()
                         )
                         val sendTransaction = LocalTransaction(
-                            id = 0,
-                            customerID = "1",
-                            customerAccount = "1",
+                            customerID = CompulynxAndroidInterviewSharedPrefs.getCustomerId(),
+                            customerAccount = CompulynxAndroidInterviewSharedPrefs.getCustomerAccount(),
                             accountTo = accountTo,
                             amount = amount.toInt().toDouble(),
                             status = "Sent"
@@ -141,14 +140,13 @@ fun SendMoneyScreen(
                         viewModel.sendMoney(
                             sendMoneyBody, sendTransaction
                         )
-                        UiUtils.showToast("Sending money...", context)
 
-                        Log.i("SendMoneyScreen", "SendMoneyBody: $sendMoneyBody")
-                        Log.i("SendMoneyScreen", "SendTransaction: $sendTransaction")
+                        Log.i("SendMoneyScreen", "SendMoney: $sendMoneyBody  SendTransaction: $sendTransaction")
                     },
                     modifier = modifier.fillMaxWidth()
                 ) {
                     when(sendMoneyUiState){
+
                         is Resource.Idle -> {
                             Text(
                                 text = "Send",
@@ -156,10 +154,11 @@ fun SendMoneyScreen(
                                 fontFamily = fontFamily
                             )
                         }
+
                         is Resource.Loading -> {
                             CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                         is Resource.Success -> {
@@ -168,10 +167,6 @@ fun SendMoneyScreen(
                                 fontFamily = fontFamily
                             )
                             showSuccessDialog = true
-                            LaunchedEffect(Unit) {
-                                delay(2000)
-                                navigateBack()
-                            }
                             viewModel.resetUiState()
                         }
                         is Resource.Error -> {

@@ -2,7 +2,8 @@ package com.morarafrank.compulynxinterview.utils
 
 object Constants {
 //    const val BASE_URL = "https://10.0.2.2:8092/springboot-rest-api/"
-    const val BASE_URL = "https://localhost:8092/springboot-rest-api/"
+//    const val BASE_URL = "https://localhost:8092/springboot-rest-api/"
+    const val BASE_URL = "http://192.168.100.74:8092/springboot-rest-api/"
 
     const val DATABASE_NAME = "compulynx_db"
 

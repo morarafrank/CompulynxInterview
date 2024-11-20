@@ -27,7 +27,8 @@ fun RoomTransactionsTableUi(
 ) {
 
     LazyColumn(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top
     ) {
 
         item{

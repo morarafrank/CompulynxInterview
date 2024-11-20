@@ -10,7 +10,6 @@ import com.morarafrank.compulynxinterview.ui.theme.fontFamily
 
 @Composable
 fun TransactionSuccessfulAlertDialog(
-    modifier: Modifier = Modifier,
     openDialog: Boolean,
     closeDialog: () -> Unit,
     navigateToHome: () -> Unit

@@ -24,9 +24,12 @@ import com.morarafrank.compulynxinterview.utils.Constants.NO_VALUE
 import com.morarafrank.compulynxinterview.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,10 +43,6 @@ class CompulynxViewModel @Inject constructor(
     private val repository: CompulynxRepository
 ): ViewModel(){
 
-
-    private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
-    val uiState = _uiState.asStateFlow()
-
     private val _loginUiState = MutableStateFlow<Resource<LoginResponse>>(Resource.Idle)
     val loginUiState = _loginUiState.asStateFlow()
 
@@ -51,46 +50,54 @@ class CompulynxViewModel @Inject constructor(
     val sendMoneyUiState: StateFlow<Resource<SendMoneyResponse>>
         get() = _sendMoneyUiState
 
-    private val _saveSendUiState = MutableStateFlow<Resource<Boolean>>(Resource.Idle)
-    val saveSendUiState = _saveSendUiState.asStateFlow()
 
     private val _checkBalanceUiState = MutableStateFlow<Resource<AccountBalanceResponse>>(Resource.Idle)
     val checkBalanceUiState = _checkBalanceUiState.asStateFlow()
 
-    var balance: String = ""
-    var errorMessage = ""
+    private val _last100Transactions = MutableStateFlow<Resource<Last100Transactions>>(Resource.Idle)
+    val last100Transactions = _last100Transactions
+        .asStateFlow()
+//        .onStart {
+//            getLast100Transactions()
+//        }
+//        .stateIn(
+//            viewModelScope,
+//            SharingStarted.WhileSubscribed(4000),
+//            Resource.Loading
+//        )
 
-    private val _last100Transactions = MutableStateFlow<Resource<Last100Transactions>>(Resource.Loading)
-    val last100Transactions = _last100Transactions.asStateFlow()
+    private val _customer = MutableStateFlow<Customer?>(null)
+    val customer: StateFlow<Customer?> get() = _customer.asStateFlow()
 
-//    private val _transactions = MutableStateFlow<Last100Transactions>(emptyList())
-//    val transactions = _transactions.asStateFlow()
 
-    private val _transactions = MutableStateFlow<Last100Transactions>(emptyList())
-    val transactions = _transactions.asStateFlow()
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> get() = _errorMessage
+
 
     init {
         getLast100Transactions()
+//        getRoomTransactions()
     }
 
     private val _roomTransactions = MutableStateFlow<LocalTransactions>(emptyList())
-    val roomTransactions: StateFlow<LocalTransactions>
-        get() = _roomTransactions
+    val roomTransactions = _roomTransactions
+        .onStart {
+            getRoomTransactions()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(4000),
+            emptyList()
+        )
 
-    var customer: Customer? = Customer(
-        NO_NUM, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE
-    )
-        private set
-
-    private val _customers = MutableStateFlow<Customers>(emptyList())
-    val customers: StateFlow<Customers>
-        get() = _customers
+    private val _balance = MutableStateFlow<String?>(null)
+    val balance: StateFlow<String?> get() = _balance
 
 
     fun login(loginBody: LoginBody) = viewModelScope.launch {
 
         try {
-            _loginUiState.value = Resource.Idle
+            _loginUiState.value = Resource.Loading
 
 
             when(val response = loginUseCase(loginBody)){
@@ -107,7 +114,7 @@ class CompulynxViewModel @Inject constructor(
                     val customer = response.data
                     CompulynxAndroidInterviewSharedPrefs.saveCustomerId(customer.customerId)
                     CompulynxAndroidInterviewSharedPrefs.saveCustomerAccount(customer.account)
-                    Timber.tag("LOGIN CUSTOMER").i("Customer: $customer")
+                    Log.i("LOGIN CUSTOMER", "CUSTOMER: $customer")
                     repository.addCustomer(
                         Customer(
                             customerId = customer.customerId,
@@ -121,8 +128,8 @@ class CompulynxViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _loginUiState.value = Resource.Error(response.throwable)
-                    Timber.tag("LOGIN ERROR:").i(response.throwable.toString())
-                    errorMessage = response.throwable.message.toString()
+                    Log.i("LOGIN ERROR", "ERROR: ${response.throwable}")
+                    _errorMessage.value = response.throwable.message.toString()
                 }
             }
 
@@ -130,64 +137,6 @@ class CompulynxViewModel @Inject constructor(
             _loginUiState.value = Resource.Error(e)
         }
     }
-
-//    fun sendMoney(
-//        sendMoneyBody: SendMoneyBody,
-//        sendTransaction: LocalTransaction
-//    ) = viewModelScope.launch {
-//
-//        try {
-//            _sendMoneyUiState.value = Resource.Idle
-//
-//            when(val response = sendMoneyUseCase(sendMoneyBody)){
-//                is Resource.Idle -> {
-//                    _sendMoneyUiState.value = Resource.Idle
-//                    Log.i("SEND MONEY", "IDLE")
-//                }
-//                is Resource.Loading -> {
-//                    _sendMoneyUiState.value = Resource.Loading
-//                    Log.i("SEND MONEY", "LOADING")
-//                }
-//                is Resource.Success -> {
-//                    _sendMoneyUiState.value = Resource.Success(response.data)
-//
-//                    Log.i("SEND MONEY", "SUCCESS: ${response.data}")
-//
-//                    when(val saveSendTransaction = repository.saveSendTransaction(sendTransaction)){
-//                        is Resource.Idle -> {
-//                            _saveSendUiState.value = Resource.Idle
-//                        }
-//                        is Resource.Loading -> {
-//                            _saveSendUiState.value = Resource.Loading
-//                        }
-//                        is Resource.Success -> {
-//                            _saveSendUiState.value = Resource.Success(true)
-//                            Log.i("SAVE TRANSACTION: ", "SUCCESS")
-//
-//                        }
-//                        is Resource.Error -> {
-//                            _saveSendUiState.value = Resource.Error(saveSendTransaction.throwable)
-//                            Log.i("SAVE TRANSACTION", "ERROR")
-//                        }
-//                    }
-//
-//                }
-//
-//                is Resource.Error -> {
-//                    _sendMoneyUiState.value = Resource.Error(response.throwable)
-//                    Log.i("SEND MONEY", "ERROR: ${response.throwable}")
-//                    errorMessage = response.throwable.message.toString()
-//                }
-//            }
-//
-//
-//
-//
-//
-//        }catch (e: Exception){
-//            _sendMoneyUiState.value = Resource.Error(e)
-//        }
-//    }
 
     fun sendMoney(
         sendMoneyBody: SendMoneyBody,
@@ -200,7 +149,6 @@ class CompulynxViewModel @Inject constructor(
             when (val response = sendMoneyUseCase(sendMoneyBody)) {
                 is Resource.Idle -> {
                     _sendMoneyUiState.value = Resource.Idle
-                    Log.i("SEND MONEY", "IDLE state reached")
                 }
                 is Resource.Loading -> {
                     _sendMoneyUiState.value = Resource.Loading
@@ -212,20 +160,14 @@ class CompulynxViewModel @Inject constructor(
 
                     Log.i("SEND MONEY", "Calling repository.saveSendTransaction")
                     when (val saveSendTransaction = repository.saveSendTransaction(sendTransaction)) {
-                        is Resource.Idle -> {
-                            _saveSendUiState.value = Resource.Idle
-                            Log.i("SAVE TRANSACTION", "IDLE state reached")
-                        }
+                        is Resource.Idle -> {}
                         is Resource.Loading -> {
-                            _saveSendUiState.value = Resource.Loading
                             Log.i("SAVE TRANSACTION", "LOADING state reached")
                         }
                         is Resource.Success -> {
-                            _saveSendUiState.value = Resource.Success(true)
                             Log.i("SAVE TRANSACTION", "SUCCESS: Transaction saved")
                         }
                         is Resource.Error -> {
-                            _saveSendUiState.value = Resource.Error(saveSendTransaction.throwable)
                             Log.e("SAVE TRANSACTION", "ERROR: ${saveSendTransaction.throwable}")
                         }
                     }
@@ -233,6 +175,7 @@ class CompulynxViewModel @Inject constructor(
                 is Resource.Error -> {
                     _sendMoneyUiState.value = Resource.Error(response.throwable)
                     Log.e("SEND MONEY", "ERROR: ${response.throwable}")
+                    _errorMessage.value = response.throwable.message.toString()
                 }
             }
         } catch (e: Exception) {
@@ -242,12 +185,13 @@ class CompulynxViewModel @Inject constructor(
     }
 
 
+
+
     fun checkBalance() = viewModelScope.launch {
-
         try {
-            _checkBalanceUiState.value = Resource.Idle
+            _checkBalanceUiState.value = Resource.Loading
 
-            when(val response = checkBalanceUseCase()){
+            when (val response = checkBalanceUseCase()) {
                 is Resource.Idle -> {
                     _checkBalanceUiState.value = Resource.Idle
                 }
@@ -256,53 +200,47 @@ class CompulynxViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _checkBalanceUiState.value = Resource.Success(response.data)
-                    balance = response.data.balance.toString()
-
-                    Timber.tag("BALANCE").i("${response.data}")
-                    Log.i("BALANCE", "${response.data}")
-                    Log.i("BALANCE", "Response: $response")
+                    _balance.value = response.data.balance.toString()
+                    Log.i("BALANCE", "BALANCE: $balance")
                 }
-
                 is Resource.Error -> {
                     _checkBalanceUiState.value = Resource.Error(response.throwable)
-                    Timber.tag("BALANCE").i("ERROR: ${response.throwable.message}")
-                    Log.i("BALANCE", "${response}")
-                    errorMessage = response.throwable.message.toString()
+                    Log.i("BALANCE", "BALANCE ERROR: ${response.throwable.message}")
+                    _errorMessage.value = response.throwable.message.toString()
                 }
             }
-
-        }catch (e: Exception){
+        } catch (e: Exception) {
             _checkBalanceUiState.value = Resource.Error(e)
         }
     }
 
-    fun getLast100Transactions() = viewModelScope.launch {
-        try {
-            _last100Transactions.value = Resource.Idle
-            getLast100TransactionsUseCase().collectLatest { last100Transactions ->
 
-                when (last100Transactions) {
-                    is Resource.Idle -> {}
+
+
+    fun getLast100Transactions() = viewModelScope.launch {
+        _last100Transactions.value = Resource.Loading
+
+        try {
+            getLast100TransactionsUseCase().collectLatest { resource ->
+                when (resource) {
                     is Resource.Loading -> {
                         _last100Transactions.value = Resource.Loading
                     }
                     is Resource.Success -> {
-                        val filteredTransactions = last100Transactions.data
-
-                        if (filteredTransactions.isNotEmpty()) {
-                            _transactions.value = filteredTransactions
-                            Log.i("TRANSACTIONS", "Filtered: $filteredTransactions")
+                        val transactions = resource.data
+                        if (transactions.isNotEmpty()) {
+                            _last100Transactions.value = Resource.Success(transactions)
+                            Log.i("100TRANSACTIONS", "Transactions: $transactions")
                         } else {
-                            _transactions.value = emptyList()
-                            Log.i("TRANSACTIONS", "No transactions found for customer ID: ${CompulynxAndroidInterviewSharedPrefs.getCustomerId()}")
+                            _last100Transactions.value = Resource.Success(emptyList())
                         }
-
-                        _last100Transactions.value = Resource.Success(filteredTransactions)
                     }
                     is Resource.Error -> {
-                        _last100Transactions.value = Resource.Error(last100Transactions.throwable)
-                        Log.i("TRANSACTIONS", "ERROR ${last100Transactions.throwable}")
-                        errorMessage = last100Transactions.throwable.message.toString()
+                        _last100Transactions.value = Resource.Error(resource.throwable)
+                        Log.i("100TRANSACTIONS", "Error: ${resource.throwable}")
+                    }
+                    else -> {
+                        _last100Transactions.value = Resource.Idle
                     }
                 }
             }
@@ -311,36 +249,6 @@ class CompulynxViewModel @Inject constructor(
         }
     }
 
-
-
-//    fun getCustomer() = viewModelScope.launch {
-//        repository.getCustomer().collectLatest { customer ->
-//            _customer.value = customer
-//        }
-//    }
-
-
-    fun saveSendTransaction(transaction: LocalTransaction) = viewModelScope.launch {
-        repository.saveSendTransaction(transaction)
-    }
-
-//    fun getRoomTransactions() = viewModelScope.launch {
-//        try {
-//
-//            Log.i("ROOM TRANSACTIONS", "Getting transactions")
-//            repository.getRoomTransactions().collectLatest { transactions ->
-//                if (transactions.isNotEmpty()){
-//                    _roomTransactions.value = transactions
-//                    Log.i("ROOM TRANSACTIONS", "Transactions: $transactions")
-//                } else {
-//                    _roomTransactions.value = emptyList()
-//                    Log.i("ROOM TRANSACTIONS", "No transactions found")
-//                }
-//            }
-//        }catch (e: Exception){
-//            _roomTransactions.value = emptyList()
-//        }
-//    }
 
     fun getRoomTransactions() = viewModelScope.launch {
         try {
@@ -355,35 +263,44 @@ class CompulynxViewModel @Inject constructor(
         }
     }
 
+
     fun getCustomer() = viewModelScope.launch {
-        repository.getCustomer().collectLatest { customers ->
-            if (customers.isNotEmpty()){
-                _customers.value = customers
-                customer = customers.firstOrNull()
-                Log.i("CUSTOMER", "Customer: $customer")
-            }else{
-                _customers.value = emptyList()
-                customer = null
-                Log.i("CUSTOMER", "No customer found")
+        try {
+            repository.getCustomer().collectLatest { customers ->
+                val firstCustomer = customers.firstOrNull()
+                _customer.value = firstCustomer // Update reactive state
+                Log.i("CUSTOMER", "Customer: $firstCustomer")
             }
+        } catch (e: Exception) {
+            Log.e("CUSTOMER", "Error fetching customer", e)
+            _customer.value = null
         }
     }
 
+
     fun resetUiState(){
         _checkBalanceUiState.value = Resource.Idle
-        _uiState.value = UiState.Idle
         _loginUiState.value = Resource.Idle
-        errorMessage = ""
+        _sendMoneyUiState.value = Resource.Idle
+        _errorMessage.value = ""
     }
 
-    private val _navigateToLogin = MutableStateFlow(false)
-    val navigateToLogin: StateFlow<Boolean> get() = _navigateToLogin
+    fun deleteCustomerFromRoom() = viewModelScope.launch {
+        repository.deleteAllCustomers()
+    }
+
+    fun deleteTransactionsFromRoom() = viewModelScope.launch{
+        repository.deleteAllTransactions()
+    }
 
     fun logOut(){
         CompulynxAndroidInterviewSharedPrefs.setIsLoggedIn(false)
         CompulynxAndroidInterviewSharedPrefs.clearInventorySharedPrefs()
         resetUiState()
 
-        _navigateToLogin.value = true
+        deleteCustomerFromRoom()
+        deleteTransactionsFromRoom()
+        _customer.value = null
+
     }
 }

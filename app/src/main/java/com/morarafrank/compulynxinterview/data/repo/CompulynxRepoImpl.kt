@@ -101,6 +101,23 @@ class CompulynxRepoImpl @Inject constructor(
 
 
     override fun getRoomTransactions(): Flow<LocalTransactions> = transactionsDao.getAllTransactions()
+    override suspend fun deleteAllCustomers(): Resource<Boolean> {
+        try {
+            customerDao.deleteAllCustomers()
+            return Resource.Success(true)
+        }catch (e: Exception){
+            return Resource.Error(e)
+        }
+    }
+
+    override suspend fun deleteAllTransactions(): Resource<Boolean> {
+        try {
+            transactionsDao.deleteAllTransactions()
+            return Resource.Success(true)
+        }catch (e: Exception){
+            return Resource.Error(e)
+        }
+    }
 
 
 }

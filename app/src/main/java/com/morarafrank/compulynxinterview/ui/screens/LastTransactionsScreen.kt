@@ -45,13 +45,8 @@ fun LastTransactionsScreen(
     viewModel: CompulynxViewModel = hiltViewModel()
 ) {
 
-
-    LaunchedEffect(Unit) {
-        viewModel.getLast100Transactions()
-    }
-
-
     val transactions = viewModel.last100Transactions.collectAsState().value
+    val errorMessage = viewModel.errorMessage.collectAsState()
 
     Scaffold(
         topBar = {
@@ -82,7 +77,6 @@ fun LastTransactionsScreen(
 
 
             when(transactions){
-                is Resource.Idle -> {}
                 is Resource.Loading -> {
                     CircularProgressIndicator(
                         modifier = modifier.size(50.dp),
@@ -100,9 +94,14 @@ fun LastTransactionsScreen(
                         )
                     }
                 }
+                is Resource.Idle -> {
+                    CircularProgressIndicator(
+                        modifier = modifier.size(50.dp),
+                    )
+                }
                 is Resource.Error -> {
                     NoDataUi(
-                        error = viewModel.errorMessage
+                        error = errorMessage.toString()
                     )
                 }
             }
